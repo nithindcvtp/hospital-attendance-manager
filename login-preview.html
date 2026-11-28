@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hospital Attendance Manager — Login Preview</title>
+<meta name="theme-color" content="#061820">
+<style>
+:root{color-scheme:dark;--cyan:#18e5f4;--ink:#061820}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(ellipse at 30% 45%,#07304e,#020b1c 65%,#01040b);color:#f4fcff;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
+body.lit{background:radial-gradient(ellipse at 30% 45%,#075477,#031b35 48%,#01050e 90%)}
+.scene{width:100%;min-height:100vh;display:grid;place-items:center;padding:24px}
+.stage{width:min(1300px,100%);display:grid;grid-template-columns:1.1fr 1fr;gap:5vw;align-items:center;zoom:.85}
+.lamp-area{position:relative;min-height:650px}
+.lamp-art{width:100%;height:650px;overflow:visible;filter:drop-shadow(0 0 15px #00eaff22)}
+.lamp-mouth{fill:#172c3d;transition:fill .5s}
+.lamp-bulb,.lightbeam{opacity:0;transition:opacity .7s}
+body.lit .lamp-mouth{fill:url(#inside);filter:drop-shadow(0 0 15px #00eaff)}
+body.lit .lamp-bulb,body.lit .lightbeam{opacity:1}
+.string-hit{position:absolute;left:66%;top:30%;height:36%;width:54px;transform:translateX(-50%);cursor:ns-resize;touch-action:none}
+.string{position:absolute;top:0;left:25px;height:100%;width:3px;background:repeating-linear-gradient(135deg,#c48d36 0 2px,#fff2bc 2px 4px);transform-origin:top}
+.pull-knob{position:absolute;left:2px;top:calc(100% - 22px);width:50px;height:50px;background:#a66a00;border:3px solid #fff5a0;border-radius:50%;box-shadow:0 0 20px #ffcf00}
+.pull-knob:after{content:"↓";display:grid;place-items:center;color:white;font-size:35px;font-weight:800}
+.instruction{position:absolute;right:0;top:56%;width:55%;text-align:center;line-height:1.5;pointer-events:none;text-shadow:0 2px 8px #00101e;font-weight:700;font-style:italic;font-size:clamp(18px,2.2vw,29px)}
+.instruction em{display:block;color:#ffe000;font-style:italic;text-decoration:underline;text-underline-offset:8px}
+.login-card{opacity:0;visibility:hidden;pointer-events:none;transform:translateY(28px) scale(.97);transition:opacity .75s,transform .75s,visibility .75s;border:3px solid #79f5ff;border-radius:42px;padding:48px 34px;background:linear-gradient(145deg,#03162e,#020c1d);box-shadow:0 20px 80px #0009}
+body.lit .login-card{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0) scale(1);box-shadow:0 0 22px #00bfff,0 0 70px #00aaff77,inset 0 0 30px #00bfff33}
+h1{text-align:center;margin:0 0 12px;font-size:clamp(44px,5.5vw,78px);letter-spacing:-2px;text-shadow:0 0 16px #00aaff}
+.subtitle{text-align:center;color:#e4efff;font-size:23px;margin:0 0 30px}
+label.field-label{display:block;color:#bfd5e5;font-size:13px;margin-bottom:9px}
+.input-wrap{height:70px;border:2px solid #3977ba;background:#102039;border-radius:20px;display:flex;align-items:center;padding:0 15px;gap:10px}
+.input-wrap:focus-within{border-color:#22e7f3;box-shadow:0 0 0 3px #00dce822}
+input[type=password],input[type=text]{width:100%;min-width:0;border:0;outline:0;color:white;background:transparent;font:500 16px system-ui}
+.eye,.forgot,.turn-off{border:0;background:none;color:#38edfa;cursor:pointer}
+.eye{font-size:20px}.options{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:22px 0;color:#c0d7dd}
+.options label{display:flex;align-items:center;gap:8px}.options input{accent-color:#12ddeb}
+.submit{width:100%;height:66px;border-radius:24px;border:2px solid #9bffff;background:linear-gradient(#35f5ff,#00c6ef);color:#05232b;font:800 24px system-ui;cursor:pointer}
+.feedback{display:none;margin-top:15px;padding:11px 13px;border-radius:10px;background:#103b40;border:1px solid #1d7780;color:#b9fbf5;font-size:13px}
+.feedback.show{display:block}
+.turn-off{position:fixed;bottom:16px;right:16px;opacity:0}body.lit .turn-off{opacity:1}
+@media(max-width:900px){.stage{zoom:1;grid-template-columns:1fr;max-width:520px;gap:0}.lamp-area{min-height:410px}.lamp-art{height:430px}.string-hit{top:22%;height:38%}.instruction{top:55%;font-size:19px}.login-card{border-radius:28px;padding:30px 22px}h1{font-size:44px}.subtitle{font-size:18px}}
+@media(max-width:480px){.lamp-area{min-height:320px}.lamp-art{height:330px}.string-hit{top:20%;height:29%}.pull-knob{width:42px;height:42px}.instruction{top:52%;font-size:15px}.login-card{padding:25px 18px}.options,.forgot{font-size:12px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<main class="scene"><div class="stage">
+<section class="lamp-area" aria-label="Interactive lamp">
+<svg class="lamp-art" viewBox="0 0 600 720" aria-hidden="true">
+<defs><linearGradient id="metal"><stop stop-color="#02060e"/><stop offset=".32" stop-color="#647da0"/><stop offset=".48" stop-color="#17263e"/><stop offset=".85" stop-color="#030913"/><stop offset="1" stop-color="#19dfff"/></linearGradient><linearGradient id="gold"><stop stop-color="#754000"/><stop offset=".35" stop-color="#fff2a0"/><stop offset=".65" stop-color="#eaa31c"/><stop offset="1" stop-color="#784000"/></linearGradient><radialGradient id="inside"><stop stop-color="#fff"/><stop offset=".25" stop-color="#8fffff"/><stop offset="1" stop-color="#00b9db"/></radialGradient><linearGradient id="beamG" x2="0" y2="1"><stop stop-color="#00eaff" stop-opacity=".65"/><stop offset="1" stop-color="#00eaff" stop-opacity="0"/></linearGradient><filter id="blur"><feGaussianBlur stdDeviation="18"/></filter></defs>
+<path class="lightbeam" d="M330 215 L535 215 L600 650 L145 650Z" fill="url(#beamG)" filter="url(#blur)"/>
+<ellipse cx="180" cy="672" rx="166" ry="26" fill="#000" opacity=".7"/>
+<path d="M22 640 Q180 600 338 640 L350 674 Q180 710 10 674Z" fill="url(#metal)" stroke="#1588ac" stroke-width="2"/>
+<ellipse cx="180" cy="640" rx="158" ry="26" fill="#101d30" stroke="#3beaff" stroke-width="3"/>
+<path d="M155 630V557H200V630Z" fill="url(#metal)"/>
+<path d="M178 558 L91 264 L286 118" fill="none" stroke="#030711" stroke-width="29" stroke-linejoin="round"/>
+<path d="M178 558 L91 264 L286 118" fill="none" stroke="url(#metal)" stroke-width="23" stroke-linejoin="round"/>
+<g fill="url(#gold)" stroke="#ffe49a" stroke-width="2"><circle cx="178" cy="558" r="27"/><circle cx="91" cy="264" r="27"/><circle cx="286" cy="118" r="26"/></g>
+<g fill="#39200b" stroke="#b87a16" stroke-width="3"><circle cx="178" cy="558" r="9"/><circle cx="91" cy="264" r="9"/><circle cx="286" cy="118" r="9"/></g>
+<g transform="rotate(-10 425 160)"><path d="M340 116 Q330 28 407 25 Q480 20 487 116Z" fill="url(#metal)" stroke="#1387a8" stroke-width="2"/><path d="M280 208 Q300 83 420 87 Q533 87 558 208Z" fill="url(#metal)" stroke="#1583a6" stroke-width="2"/><ellipse class="lamp-mouth" cx="419" cy="208" rx="139" ry="39" stroke="#52d8ef" stroke-width="3"/><ellipse class="lamp-bulb" cx="419" cy="198" rx="32" ry="12" fill="#fff"/></g>
+</svg>
+<div class="string-hit" id="pullString" role="button" tabindex="0" aria-label="Pull the chain to turn on the lamp"><div class="string" id="string"></div><div class="pull-knob" id="knob"></div></div>
+<div class="instruction">Pull the chain to <em>turn on the light</em></div></section>
+<section class="login-card" aria-label="Hospital login">
+<h1>Welcome</h1><p class="subtitle">Hospital Attendance Management System</p>
+<form id="loginForm"><label class="field-label" for="password">Password</label>
+<div class="input-wrap"><span aria-hidden="true">🔒</span><input id="password" type="password" placeholder="Enter your password" autocomplete="current-password" required><button type="button" class="eye" id="togglePassword" aria-label="Show password">◉</button></div>
+<div class="options"><label><input type="checkbox" checked> Remember me</label><button type="button" class="forgot" id="forgot">Forgot Password?</button></div>
+<button type="submit" class="submit">Sign In →</button>
+<div class="feedback" id="feedback" role="status" aria-live="polite"></div></form>
+</section></div><button class="turn-off" type="button" id="turnOff">Switch off</button></main>
+<script>
+const body=document.body,pull=document.getElementById('pullString'),cord=document.getElementById('string'),knob=document.getElementById('knob'),password=document.getElementById('password'),feedback=document.getElementById('feedback');
+let dragging=false,startY=0,pulled=false;
+function setLight(on){body.classList.toggle('lit',on);pulled=on;if(on){setTimeout(()=>{if(pulled)password.focus({preventScroll:true})},850)}else{feedback.classList.remove('show');password.value=''}}
+function showFeedback(message){feedback.textContent=message;feedback.classList.add('show')}
+pull.addEventListener('pointerdown',e=>{dragging=true;startY=e.clientY;pull.setPointerCapture(e.pointerId)});
+pull.addEventListener('pointermove',e=>{if(!dragging)return;const distance=Math.max(0,Math.min(55,e.clientY-startY));cord.style.transform=`scaleY(${1+distance/pull.clientHeight})`;knob.style.transform=`translateY(${distance}px)`});
+function finish(cancel=false){if(!dragging)return;dragging=false;cord.style.transform='';knob.style.transform='';if(!cancel)setLight(!pulled)}
+pull.addEventListener('pointerup',()=>finish());pull.addEventListener('pointercancel',()=>finish(true));
+pull.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();setLight(!pulled)}});
+document.getElementById('turnOff').addEventListener('click',()=>setLight(false));
+document.getElementById('togglePassword').addEventListener('click',()=>{const showing=password.type==='password';password.type=showing?'text':'password';document.getElementById('togglePassword').setAttribute('aria-label',showing?'Hide password':'Show password')});
+document.getElementById('forgot').addEventListener('click',()=>showFeedback('Password recovery is not configured. Please contact the hospital administrator.'));
+document.getElementById('loginForm').addEventListener('submit',e=>{e.preventDefault();showFeedback('This login is a design preview. Sign-in is disabled until secure authentication is connected.')});
+</script></body></html>
