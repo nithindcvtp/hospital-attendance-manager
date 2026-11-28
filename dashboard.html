@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hospital Shift &amp; Attendance Manager</title>
+<style>
+:root{--blue:#1d4ed8;--blue-d:#1e3a8a;--blue-l:#eff6ff;--line:#dbe3f0;--txt:#0f172a;--mut:#64748b;--bg:#f4f7fc;--card:#fff;
+--normal:#16a34a;--leave:#dc2626;--off:#6b7280;--holiday:#7c3aed;--adjust:#2563eb;--cover:#f97316}
+*{box-sizing:border-box}body{margin:0;font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--txt)}
+button,input,select,textarea{font:inherit}
+.side{position:fixed;inset:0 auto 0 0;width:236px;background:var(--blue-d);color:#fff;display:flex;flex-direction:column;z-index:30;transition:transform .2s}
+.brand{padding:18px 16px;font-weight:700;font-size:15px;border-bottom:1px solid #ffffff22;line-height:1.3}.brand small{display:block;font-weight:400;opacity:.7;font-size:12px}
+.side nav{padding:10px;flex:1;overflow:auto}.side a{display:block;color:#dbeafe;text-decoration:none;padding:10px 12px;border-radius:8px;margin-bottom:2px;cursor:pointer}
+.side a:hover{background:#ffffff14}.side a.on{background:#fff;color:var(--blue-d);font-weight:600}
+.main{margin-left:236px;min-height:100vh}
+.top{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:10px 20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.top h1{font-size:18px;margin:0;flex:1;min-width:140px}.burger{display:none;background:none;border:0;font-size:22px;cursor:pointer}
+.content{padding:20px;max-width:1200px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:16px}
+.card h2{margin:0 0 12px;font-size:16px}.grid{display:grid;gap:12px}.g4{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}.g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.stat{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px;border-left:4px solid var(--blue)}.stat b{display:block;font-size:26px;line-height:1.1}.stat span{color:var(--mut);font-size:12px}
+label{display:block;font-size:12px;font-weight:600;color:var(--mut);margin-bottom:3px}
+input,select,textarea{width:100%;padding:8px 10px;border:1px solid #c5d0e3;border-radius:8px;background:#fff}input:focus,select:focus,textarea:focus{outline:2px solid #93b4ff;border-color:var(--blue)}
+.btn{border:1px solid var(--blue);background:var(--blue);color:#fff;padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:600;white-space:nowrap}
+.btn:hover{background:var(--blue-d)}.btn.sec{background:#fff;color:var(--blue)}.btn.sec:hover{background:var(--blue-l)}.btn.red{background:#fff;color:var(--leave);border-color:#f3b4b4}.btn.red:hover{background:#fef2f2}
+.btn.big{padding:11px 20px;font-size:15px;background:#15803d;border-color:#15803d}.btn.sm{padding:4px 9px;font-size:12px}.btn:disabled{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}.row>div{flex:1;min-width:130px}.row>.fit{flex:0 0 auto;min-width:0}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:8px 10px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--blue-l);color:var(--blue-d);font-size:12px;position:sticky;top:0}.tw{overflow-x:auto}
+.pill{display:inline-block;padding:2px 9px;border-radius:99px;color:#fff;font-size:12px;font-weight:600;white-space:nowrap}
+.normal{background:var(--normal)}.leave{background:var(--leave)}.off{background:var(--off)}.holiday{background:var(--holiday)}.adjust{background:var(--adjust)}.cover{background:var(--cover)}.none{background:#fff;color:var(--mut);border:1px dashed #aab6cc}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}.cal .h{font-size:11px;font-weight:700;color:var(--mut);text-align:center}
+.day{min-height:78px;border:1px solid var(--line);border-radius:8px;padding:4px;background:#fff;cursor:pointer}.day:hover{border-color:var(--blue)}.day.today{outline:2px solid var(--blue)}.day.blank{border:0;background:none;cursor:default}
+.day .n{font-size:12px;font-weight:700;color:var(--mut)}.chip{display:block;font-size:11px;color:#fff;border-radius:4px;padding:0 4px;margin-top:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.ro{border-collapse:collapse;font-size:12px;min-width:max-content;width:auto}.ro th,.ro td{border:1px solid #c5d0e3;padding:3px 8px;text-align:left;white-space:nowrap;background:#fff;color:var(--txt);position:static}
+.ro th{font-weight:400}.ro td.chg{background:#ffff00}
+.legend{display:flex;gap:12px;flex-wrap:wrap;margin-top:10px;font-size:12px}.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+.emp{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}.emp h3{margin:0 0 4px;font-size:16px}.sched{color:var(--mut);font-size:12px;margin-bottom:10px}
+.quick{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.banner{padding:10px 14px;border-radius:8px;margin-bottom:14px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412}.banner.err{background:#fef2f2;border-color:#fecaca;color:#991b1b}
+#toasts{position:fixed;right:14px;bottom:14px;z-index:99;display:flex;flex-direction:column;gap:8px}.toast{background:#0f172a;color:#fff;padding:10px 14px;border-radius:8px;max-width:340px;box-shadow:0 4px 14px #0003}.toast.ok{background:#15803d}.toast.err{background:#b91c1c}.toast.info{background:#1d4ed8}
+.sync{font-size:12px;font-weight:600;padding:4px 10px;border-radius:99px;border:1px solid var(--line);white-space:nowrap}.sync.ok{color:#15803d;background:#f0fdf4}.sync.busy{color:#1d4ed8;background:#eff6ff}.sync.bad{color:#b91c1c;background:#fef2f2;cursor:pointer}
+.login{max-width:340px;margin:12vh auto;text-align:center}.muted{color:var(--mut)}.right{margin-left:auto}
+@media(max-width:900px){.side{transform:translateX(-100%)}.side.open{transform:none}.main{margin-left:0}.burger{display:block}.content{padding:12px}.day{min-height:60px}.chip{font-size:10px}}
+@media print{.side,.top,.noprint,#toasts{display:none!important}.main{margin:0}.card{border:0;padding:0}body{background:#fff}}
+</style>
+</head>
+<body>
+<div id="app"></div><div id="toasts"></div>
+<script src="/core.js"></script>
+<script>
+const C = window.Core, S = C.S;
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pad = C.pad, MONTHS = C.MONTHS, STATUSES = C.STATUSES, fmt12 = C.fmt12;
+const range12 = (a, b) => (a && b ? `${fmt12(a)} – ${fmt12(b)}` : '—');
+const CLS = { [S.NORMAL]: 'normal', [S.LEAVE]: 'leave', [S.LEAVE_FH]: 'leave', [S.LEAVE_SH]: 'leave', [S.WO]: 'off', [S.HOL]: 'holiday', [S.ADJ]: 'adjust', [S.COVER]: 'cover', 'Not Recorded': 'none' };
+const SHORT = { [S.LEAVE_FH]: '½ Leave (1st)', [S.LEAVE_SH]: '½ Leave (2nd)' };
+const PAGES = [['dashboard', 'Dashboard'], ['shifts', 'Monthly Shift Configuration'], ['attendance', 'Daily Attendance'], ['leave', 'Leave Management'], ['coverage', 'Shift Coverage'], ['reports', 'Monthly Reports'], ['settings', 'Settings']];
+const PKEY = 'hsam_pending_v1';
+const loadPending = () => { try { return { ...C.emptyOps(), ...JSON.parse(localStorage.getItem(PKEY) || '{}') }; } catch (e) { return C.emptyOps(); } };
+const now = new Date();
+const st = { token: localStorage.getItem('hsam_token') || '', page: (location.hash || '#dashboard').slice(1), year: now.getFullYear(), month: now.getMonth() + 1, db: null, today: '', url: '',
+  attDate: null, covEdit: null, covPrefill: null, repYM: null, repEmp: 'ALL', boot: null, pending: loadPending(), sending: null, inflight: false, syncErr: false, fetchedAt: 0 };
+
+const ym = () => `${st.year}-${pad(st.month)}`;
+const emps = () => st.db.employees.filter((e) => e.active);
+const ename = (id) => (st.db.employees.find((e) => e.id === id) || {}).name || id;
+const shifts = () => C.shiftMap(st.db, st.year, st.month);
+const att = (date, id) => C.findAtt(st.db, date, id);
+const monthAtt = () => st.db.attendance.filter((a) => a.Date.startsWith(ym()));
+const monthCov = () => st.db.coverage.filter((c) => c.Date.startsWith(ym()));
+const report = (y, m, emp) => C.buildReport({ db: st.db, year: y, month: m, employeeId: emp || 'ALL', today: st.today });
+const fmtDate = (s) => new Date(s + 'T00:00:00Z').toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', weekday: 'short', timeZone: 'UTC' });
+const shiftLbl = (k) => `${k} (${fmt12(C.SHIFTS[k].start)} – ${fmt12(C.SHIFTS[k].end)})`;
+const shiftOpts = (sel, blank) => (blank ? `<option value="">${blank}</option>` : '') + Object.keys(C.SHIFTS).map((k) => `<option value="${k}" ${k === sel ? 'selected' : ''}>${shiftLbl(k)}</option>`).join('');
+const pill = (s) => `<span class="pill ${CLS[s] || 'none'}">${esc(SHORT[s] || s)}</span>`;
+const val = (sel) => ($(sel) || {}).value || '';
+
+function toast(msg, type = 'ok') {
+  const t = document.createElement('div'); t.className = 'toast ' + type; t.textContent = msg;
+  $('#toasts').appendChild(t); setTimeout(() => t.remove(), type === 'err' ? 8000 : 4000);
+}
+async function call(action, payload = {}) {
+  let r, j;
+  try {
+    r = await fetch('/api', { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-auth': st.token }, body: JSON.stringify({ action, ...payload }) });
+    j = await r.json();
+  } catch (e) { const er = new Error('Network problem. Check your connection.'); er.net = true; throw er; }
+  if (r.status === 401 && action !== 'login') { st.token = ''; localStorage.removeItem('hsam_token'); showLogin(); const er = new Error('Please sign in.'); er.auth = true; throw er; }
+  if (!j.ok) { const er = new Error(j.error || 'Request failed.'); er.code = j.code; er.status = r.status; throw er; }
+  return j.result;
+}
+
+/* ---------- instant changes + background sync ---------- */
+const persist = () => { try { localStorage.setItem(PKEY, JSON.stringify(C.mergeOps(st.sending || C.emptyOps(), st.pending))); } catch (e) {} };
+const hasPending = () => st.inflight || !C.isEmpty(st.pending);
+function badge() {
+  const el = $('#sync'); if (!el) return;
+  if (st.syncErr) { el.className = 'sync bad'; el.textContent = '⚠ Not saved yet – tap to retry'; }
+  else if (hasPending()) { el.className = 'sync busy'; el.textContent = '⟳ Saving to Google Sheet…'; }
+  else { el.className = 'sync ok'; el.textContent = '✓ Saved'; }
+}
+let timer;
+function kick(delay = 600) { clearTimeout(timer); badge(); timer = setTimeout(flush, delay); }
+async function flush() {
+  if (st.inflight || C.isEmpty(st.pending)) { badge(); return; }
+  const snap = st.pending; st.pending = C.emptyOps(); st.sending = snap; st.inflight = true; st.syncErr = false; persist(); badge();
+  try {
+    const r = await call('sync', snap);
+    st.inflight = false; st.sending = null;
+    if (r.errors && r.errors.length) { toast('Some changes could not be saved: ' + r.errors.join('; '), 'err'); await fetchAll(true); render(); }
+  } catch (e) {
+    st.inflight = false; st.sending = null; st.pending = C.mergeOps(snap, st.pending);
+    if (!e.auth) { st.syncErr = true; if (!e.net && e.status && e.status < 500) toast(e.message, 'err'); timer = setTimeout(flush, 8000); }
+  }
+  persist(); badge();
+  if (!st.syncErr && !C.isEmpty(st.pending)) kick(50);
+}
+async function flushAll() {
+  clearTimeout(timer);
+  for (let i = 0; i < 80; i++) {
+    if (!st.inflight && C.isEmpty(st.pending)) return;
+    st.syncErr = false;
+    if (!st.inflight) await flush(); else await new Promise((r) => setTimeout(r, 250));
+    if (st.syncErr) throw new Error('Could not save to Google Sheets yet. Check your connection and try again.');
+  }
+  throw new Error('Saving is taking too long. Please try again.');
+}
+function commit(res) {
+  const ops = res.ops || res;
+  st.db = C.applyOps(st.db, ops);
+  st.pending = C.mergeOps(st.pending, ops);
+  persist(); render(); kick();
+  (res.notes || []).forEach((n) => toast(n, 'info'));
+}
+function run(fn, okMsg) {
+  try { const r = fn(); commit(r); if (okMsg) toast(okMsg); return true; } catch (e) { toast(e.message, 'err'); return false; }
+}
+async function fetchAll(keepPending) {
+  const d = await call('getAll');
+  st.today = d.today; st.url = d.spreadsheetUrl;
+  st.db = { employees: d.employees, settings: d.settings, shiftRows: d.shiftRows, attendance: d.attendance, coverage: d.coverage };
+  const left = C.mergeOps(st.sending || C.emptyOps(), st.pending);
+  if (!C.isEmpty(left)) st.db = C.applyOps(st.db, left);
+  st.fetchedAt = Date.now();
+}
+// Daily attendance: employees flagged "auto" are marked present (Weekly Off on Sundays) unless already recorded.
+function autoFill() {
+  try { const o = C.planAutoPresent(st.db, st.today); if (!C.isEmpty(o)) { st.db = C.applyOps(st.db, o); st.pending = C.mergeOps(st.pending, o); persist(); kick(); } } catch (e) {}
+}
+window.addEventListener('beforeunload', (e) => { if (hasPending()) { e.preventDefault(); e.returnValue = ''; } });
+document.addEventListener('visibilitychange', async () => {
+  if (document.visibilityState === 'visible' && st.db && !hasPending() && Date.now() - st.fetchedAt > 30000) { try { await fetchAll(); autoFill(); render(); } catch (e) {} }
+});
+
+/* ---------- shell ---------- */
+async function start() {
+  try { st.boot = await call('status'); } catch (e) { $('#app').innerHTML = `<div class="login card">${esc(e.message)}</div>`; return; }
+  if (st.boot.authRequired && !st.token) return showLogin();
+  await loadAndRender();
+}
+function showLogin() {
+  $('#app').innerHTML = `<div class="login card"><h2>🏥 Hospital Shift &amp; Attendance Manager</h2><p class="muted">Please sign in</p>
+  <div style="text-align:left"><label for="un">Username</label><input id="un" autocomplete="username" autocapitalize="none" autofocus>
+  <label for="pw" style="margin-top:10px">Password</label><input type="password" id="pw" autocomplete="current-password"></div><br><button class="btn" id="go" style="width:100%">Sign in</button></div>`;
+  const go = async () => {
+    const b = $('#go'); b.disabled = true; b.textContent = 'Signing in…';
+    try { const r = await call('login', { username: $('#un').value, password: $('#pw').value }); st.token = r.token; localStorage.setItem('hsam_token', r.token); await loadAndRender(); }
+    catch (e) { toast(e.message, 'err'); b.disabled = false; b.textContent = 'Sign in'; }
+  };
+  $('#go').onclick = go;
+  $('#pw').addEventListener('keydown', (e) => { if (e.key === 'Enter') go(); });
+  $('#un').addEventListener('keydown', (e) => { if (e.key === 'Enter') $('#pw').focus(); });
+}
+function logout() {
+  if (hasPending() && !confirm('Some changes are still saving. Sign out anyway?')) return;
+  st.token = ''; localStorage.removeItem('hsam_token'); st.db = null; showLogin();
+}
+async function loadAndRender() {
+  $('#app').innerHTML = '<div class="login muted">Loading from Google Sheets…</div>';
+  try { await fetchAll(); } catch (e) { return setupError(e); }
+  autoFill();
+  st.attDate = defaultDate(); st.repYM = ym();
+  render(); if (!C.isEmpty(st.pending)) kick(100);
+}
+function setupError(e) {
+  $('#app').innerHTML = `<div class="content" style="max-width:640px;margin:8vh auto"><div class="card"><h2>${e.code === 'NOT_CONFIGURED' ? 'Connect Google Sheets' : 'Could not load data'}</h2>
+  <div class="banner err">${esc(e.message)}</div>
+  <p class="muted">Deploy the Apps Script in your Google Sheet, then add <code>SCRIPT_URL</code> and <code>SCRIPT_SECRET</code> in Vercel → Settings → Environment Variables and redeploy.</p>
+  <button class="btn" onclick="location.reload()">Retry</button></div></div>`;
+}
+function defaultDate() { return st.today.startsWith(ym()) ? st.today : `${ym()}-01`; }
+function go(page) { st.page = page; location.hash = page; render(); window.scrollTo(0, 0); }
+function render() {
+  const title = (PAGES.find((p) => p[0] === st.page) || PAGES[0])[1];
+  $('#app').innerHTML = `
+  <aside class="side" id="side"><div class="brand">🏥 Shift &amp; Attendance<small>${esc(st.db.settings.HospitalName || '')}</small></div>
+  <nav>${PAGES.map(([k, l]) => `<a class="${k === st.page ? 'on' : ''}" data-go="${k}">${l}</a>`).join('')}</nav><nav style="flex:0"><a id="logout">⎋ Sign out</a></nav></aside>
+  <div class="main"><div class="top noprint"><button class="burger" id="burger">☰</button><h1>${title}</h1>
+  <span id="sync" class="sync ok">✓ Saved</span>
+  <div style="width:170px"><input type="month" id="gm" value="${ym()}" aria-label="Month"></div>
+  <button class="btn" id="xl">⬇ Download Duty List</button></div>
+  <div class="content" id="view">${view()}</div></div>`;
+  $('#burger').onclick = () => $('#side').classList.toggle('open');
+  $('#logout').onclick = logout;
+  $('#sync').onclick = () => { st.syncErr = false; flush(); };
+  $('#gm').onchange = (e) => { const [y, m] = e.target.value.split('-').map(Number); if (y && m) { st.year = y; st.month = m; st.attDate = defaultDate(); st.repYM = ym(); render(); } };
+  $('#xl').onclick = () => downloadExcel(st.year, st.month, 'duty', 'ALL');
+  document.querySelectorAll('[data-go]').forEach((a) => (a.onclick = () => go(a.dataset.go)));
+  bind(); badge();
+}
+function view() {
+  switch (st.page) {
+    case 'shifts': return vShifts(); case 'attendance': return vAttendance(); case 'leave': return vLeave();
+    case 'coverage': return vCoverage(); case 'reports': return vReports(); case 'settings': return vSettings(); default: return vDashboard();
+  }
+}
+const shiftBanner = () => emps().some((e) => !shifts()[e.id]) ? `<div class="banner">Shifts for <b>${MONTHS[st.month - 1]} ${st.year}</b> are not configured yet. <a href="#shifts" data-go="shifts" style="color:inherit;font-weight:700">Choose them now →</a></div>` : '';
+
+/* ---------- dashboard ---------- */
+function vDashboard() {
+  const r = report(st.year, st.month), s = r.stats;
+  const cards = [`<div class="stat"><b>${esc(s.label)}</b><span>Selected month</span></div>`, `<div class="stat"><b>${s.workingDays}</b><span>Total working days</span></div>`];
+  r.summaries.forEach((x) => cards.push(`<div class="stat"><b>${x.attendanceDays}</b><span>${esc(x.employee)} – attendance days</span></div>`));
+  r.summaries.forEach((x) => cards.push(`<div class="stat" style="border-left-color:var(--leave)"><b>${x.leaveDays}</b><span>${esc(x.employee)} – leave days</span></div>`));
+  cards.push(`<div class="stat" style="border-left-color:var(--cover)"><b>${s.coverageDays}</b><span>Shift coverage days</span></div>`,
+    `<div class="stat" style="border-left-color:var(--adjust)"><b>${s.adjustmentDays}</b><span>Shift adjustment days</span></div>`,
+    `<div class="stat" style="border-left-color:#eab308"><b>${s.incomplete}</b><span>Incomplete attendance records</span></div>`);
+  const map = {}; monthAtt().forEach((a) => ((map[a.Date] = map[a.Date] || {})[a.EmployeeID] = a));
+  const first = new Date(Date.UTC(st.year, st.month - 1, 1)).getUTCDay(), n = C.daysIn(st.year, st.month);
+  let cal = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map((x) => `<div class="h">${x}</div>`).join('') + '<div class="day blank"></div>'.repeat(first);
+  for (let i = 1; i <= n; i++) {
+    const date = `${ym()}-${pad(i)}`;
+    cal += `<div class="day ${date === st.today ? 'today' : ''}" data-date="${date}"><div class="n">${i}</div>${emps().map((e) => { const a = (map[date] || {})[e.id]; return a ? `<span class="chip ${CLS[a.Status]}" title="${esc(e.name)}: ${esc(a.Status)}">${esc(e.name.slice(0, 3))}: ${esc(SHORT[a.Status] || a.Status.replace(' Duty', ''))}</span>` : ''; }).join('')}</div>`;
+  }
+  const legend = [['normal', 'Normal Duty'], ['leave', 'Leave / ½ Leave'], ['off', 'Weekly Off'], ['holiday', 'Holiday'], ['adjust', 'Shift Adjustment'], ['cover', 'Duty Coverage']].map(([c, l]) => `<span><i class="${c}"></i>${l}</span>`).join('');
+  return `${shiftBanner()}<div class="grid g4">${cards.join('')}</div><div class="card" style="margin-top:16px"><h2>${esc(s.label)} – Calendar</h2><div class="cal">${cal}</div><div class="legend">${legend}</div><p class="muted noprint" style="margin:8px 0 0">Click a day to record attendance.</p></div>`;
+}
+
+/* ---------- shifts ---------- */
+function historyList() {
+  const h = {};
+  st.db.shiftRows.forEach((r) => { const k = `${r.Year}-${pad(Number(r.Month))}`; (h[k] = h[k] || { year: Number(r.Year), month: Number(r.Month), codes: {} }).codes[r.EmployeeID] = C.codeOf(r.StartTime, r.EndTime); });
+  return Object.values(h).sort((a, b) => (b.year - a.year) || (b.month - a.month));
+}
+function vShifts() {
+  const cur = shifts();
+  const rows = emps().map((e) => {
+    const body = e.fixed ? `<p style="margin:6px 0 0"><b>${shiftLbl(e.fixed)}</b><br><span class="muted">Fixed shift – no monthly change needed.</span></p>`
+      : `<label>Shift for this month</label><select data-sh="${e.id}">${shiftOpts(cur[e.id] ? C.codeOf(cur[e.id].start, cur[e.id].end) : '', 'Select shift…')}</select>`;
+    return `<div class="emp"><h3>${esc(e.name)}</h3>${body}</div>`;
+  }).join('');
+  const hist = historyList();
+  const prev = hist.find((h) => `${h.year}-${pad(h.month)}` < ym());
+  const histRows = hist.map((h) => `<tr><td>${MONTHS[h.month - 1]} ${h.year}</td>${emps().map((e) => `<td>${esc(h.codes[e.id] || '—')}</td>`).join('')}<td><button class="btn sm sec" data-pick="${h.year}-${h.month}">View</button></td></tr>`).join('');
+  return `<div class="card"><h2>Shifts for ${MONTHS[st.month - 1]} ${st.year}</h2>
+  <p class="muted">Choose each person's shift for the month. Shifts never change automatically, and saving a month never changes any other month.</p>
+  <div class="grid g2">${rows}</div><div class="row" style="margin-top:14px"><div class="fit"><button class="btn" id="saveShifts">Save shifts</button></div>${prev ? `<div class="fit"><button class="btn sec" id="copyPrev" data-prev="${prev.year}-${prev.month}">Copy ${MONTHS[prev.month - 1]} ${prev.year} shifts</button></div>` : ''}</div></div>
+  <div class="card"><h2>Shift history</h2><div class="tw"><table><tr><th>Month</th>${emps().map((e) => `<th>${esc(e.name)}</th>`).join('')}<th></th></tr>${histRows || '<tr><td colspan="9" class="muted">Nothing configured yet.</td></tr>'}</table></div></div>`;
+}
+
+/* ---------- attendance ---------- */
+function vAttendance() {
+  const date = st.attDate, sh = shifts();
+  const cards = emps().map((e) => {
+    const rec = att(date, e.id), s = sh[e.id];
+    const sched = rec ? [rec.ScheduledStart, rec.ScheduledEnd] : s ? [s.start, s.end] : ['', ''];
+    const cov = st.db.coverage.filter((c) => c.Date === date && (c.AbsentEmployeeID === e.id || c.CoveringEmployeeID === e.id)).map((c) => c.AbsentEmployeeID === e.id ? `Covered by ${ename(c.CoveringEmployeeID)}` : `Covering ${ename(c.AbsentEmployeeID)}`).join(', ');
+    const selShift = C.codeOf(sched[0], sched[1]);
+    return `<div class="emp" data-card="${e.id}"><h3>${esc(e.name)} ${rec ? pill(rec.Status) : pill('Not Recorded')}</h3>
+    <div class="sched">Scheduled: <b>${range12(...sched)}</b>${cov ? ` · ${esc(cov)}` : ''}</div>
+    <div class="quick"><button class="btn sm" data-q="${S.NORMAL}" data-e="${e.id}">✔ Normal duty</button><button class="btn sm red" data-q="${S.LEAVE}" data-e="${e.id}">Leave</button><button class="btn sm red" data-q="${S.LEAVE_FH}" data-e="${e.id}">½ Leave – 1st half</button><button class="btn sm red" data-q="${S.LEAVE_SH}" data-e="${e.id}">½ Leave – 2nd half</button><button class="btn sm sec" data-q="${S.WO}" data-e="${e.id}">Weekly off</button><button class="btn sm sec" data-q="${S.HOL}" data-e="${e.id}">Holiday</button><button class="btn sm sec" data-cov="${e.id}">Covered duty…</button></div>
+    <div class="row"><div><label>Shift for the day</label><select data-f="shift">${shiftOpts(selShift)}</select></div>
+    <div><label>Status</label><select data-f="status">${STATUSES.map((x) => `<option ${rec && rec.Status === x ? 'selected' : ''}>${x}</option>`).join('')}</select></div></div>
+    <div class="row" style="margin-top:8px"><div><label>Actual start</label><input type="time" data-f="as" value="${rec ? rec.ActualStart : ''}"></div><div><label>Actual end</label><input type="time" data-f="ae" value="${rec ? rec.ActualEnd : ''}"></div></div>
+    <div style="margin-top:8px"><label>Remarks</label><input data-f="rm" maxlength="500" value="${esc(rec ? rec.Remarks : '')}"></div>
+    <div class="row" style="margin-top:10px"><div class="fit"><button class="btn" data-save="${e.id}">Save</button></div>${rec ? `<div class="fit"><button class="btn red" data-del="${rec.RecordID}">Delete</button></div>` : ''}</div></div>`;
+  }).join('');
+  return `${shiftBanner()}<div class="card noprint"><div class="row"><div class="fit"><button class="btn sec" id="dPrev">◀</button></div><div><label>Date</label><input type="date" id="attDate" value="${date}"></div><div class="fit"><button class="btn sec" id="dNext">▶</button></div>
+  <div class="fit"><button class="btn sec" id="offAll">Mark all Sundays as weekly off</button></div></div></div>
+  <h2 style="margin:0 0 10px">${fmtDate(date)}</h2><div class="grid g2">${cards}</div>`;
+}
+
+/* ---------- leave ---------- */
+function vLeave() {
+  const list = monthAtt().filter((a) => C.LEAVES.includes(a.Status)).sort((a, b) => a.Date.localeCompare(b.Date)).map((a) => {
+    const by = st.db.coverage.filter((c) => c.Date === a.Date && c.AbsentEmployeeID === a.EmployeeID).map((c) => ename(c.CoveringEmployeeID)).join(', ');
+    return `<tr><td>${fmtDate(a.Date)}</td><td>${esc(ename(a.EmployeeID))}</td><td>${pill(a.Status)}</td><td>${by ? esc(by) : '<span class="muted">—</span>'}</td><td>${esc(a.Remarks)}</td><td class="noprint"><button class="btn sm sec" data-covleave="${a.Date}|${a.EmployeeID}">${by ? 'Edit coverage' : 'Add coverage'}</button> <button class="btn sm red" data-del="${a.RecordID}">Delete</button></td></tr>`;
+  }).join('');
+  return `${shiftBanner()}<div class="card"><h2>Record leave</h2><p class="muted">Pick full day or a half day. When the 8:00 AM person is on leave (full day or first half), the 10:00 AM colleague automatically takes over the 8:00 AM duty.</p>
+  <div class="row"><div><label>Employee</label><select id="lvEmp">${emps().map((e) => `<option value="${e.id}">${esc(e.name)}</option>`).join('')}</select></div>
+  <div><label>Leave type</label><select id="lvKind"><option value="full">Full day</option><option value="first">Half day – first half</option><option value="second">Half day – second half</option></select></div>
+  <div><label>From</label><input type="date" id="lvFrom" value="${st.attDate || ''}"></div><div><label>To</label><input type="date" id="lvTo" value="${st.attDate || ''}"></div>
+  <div style="flex:2"><label>Remarks</label><input id="lvRm" maxlength="500"></div><div class="fit"><button class="btn" id="lvSave">Save leave</button></div></div></div>
+  <div class="card"><h2>Leave in ${MONTHS[st.month - 1]} ${st.year}</h2><div class="tw"><table><tr><th>Date</th><th>Employee</th><th>Type</th><th>Covered by</th><th>Remarks</th><th class="noprint"></th></tr>${list || '<tr><td colspan="6" class="muted">No leave recorded.</td></tr>'}</table></div></div>`;
+}
+
+/* ---------- coverage ---------- */
+function vCoverage() {
+  const ed = st.covEdit, pf = st.covPrefill || {};
+  const v = ed ? { from: ed.Date, to: '', abs: ed.AbsentEmployeeID, cov: ed.CoveringEmployeeID, type: ed.CoverageType, as: ed.ActualStart, ae: ed.ActualEnd, rm: ed.Remarks }
+    : { from: pf.date || st.attDate, to: pf.date || st.attDate, abs: pf.abs || (emps()[1] || emps()[0] || {}).id, cov: pf.cov || (emps()[0] || {}).id, type: 'Full Duty Coverage', as: '', ae: '', rm: '' };
+  const opts = (sel) => emps().map((e) => `<option value="${e.id}" ${e.id === sel ? 'selected' : ''}>${esc(e.name)}</option>`).join('');
+  const list = monthCov().sort((a, b) => a.Date.localeCompare(b.Date)).map((c) => `<tr><td>${fmtDate(c.Date)}</td><td>${esc(ename(c.AbsentEmployeeID))}</td><td>${esc(ename(c.CoveringEmployeeID))}</td><td>${esc(c.CoverageType)}</td><td>${range12(c.ActualStart, c.ActualEnd)}</td><td>${esc(c.Remarks)}</td><td class="noprint"><button class="btn sm sec" data-covedit="${c.CoverageID}">Edit</button> <button class="btn sm red" data-covdel="${c.CoverageID}">Delete</button></td></tr>`).join('');
+  return `${shiftBanner()}<div class="card"><h2>${ed ? 'Edit coverage record' : 'Record shift coverage'}</h2>
+  <p class="muted">Enter the actual duty times worked. Covering another employee does not automatically extend working hours.</p>
+  <div class="row"><div><label>${ed ? 'Date' : 'From date'}</label><input type="date" id="cvFrom" value="${v.from || ''}"></div>${ed ? '' : `<div><label>To date (consecutive days)</label><input type="date" id="cvTo" value="${v.to || ''}"></div>`}
+  <div><label>Employee on leave</label><select id="cvAbs">${opts(v.abs)}</select></div><div><label>Covering employee</label><select id="cvCov">${opts(v.cov)}</select></div></div>
+  <div class="row" style="margin-top:10px"><div><label>Coverage type</label><select id="cvType">${C.COVER_TYPES.map((t) => `<option ${t === v.type ? 'selected' : ''}>${t}</option>`).join('')}</select></div>
+  <div><label>Actual duty start</label><input type="time" id="cvAs" value="${v.as}"></div><div><label>Actual duty end</label><input type="time" id="cvAe" value="${v.ae}"></div><div style="flex:2"><label>Remarks</label><input id="cvRm" maxlength="500" value="${esc(v.rm)}"></div></div>
+  <label style="margin-top:10px;display:flex;gap:8px;align-items:center;font-weight:400"><input type="checkbox" id="cvAtt" checked style="width:auto"> Also update attendance (leave for absent employee, covered duty for covering employee)</label>
+  <div class="row" style="margin-top:10px"><div class="fit"><button class="btn" id="cvSave">${ed ? 'Update coverage' : 'Save coverage'}</button></div>${ed ? '<div class="fit"><button class="btn sec" id="cvCancel">Cancel edit</button></div>' : ''}</div></div>
+  <div class="card"><h2>Coverage in ${MONTHS[st.month - 1]} ${st.year}</h2><div class="tw"><table><tr><th>Date</th><th>On leave</th><th>Covering</th><th>Type</th><th>Actual duty</th><th>Remarks</th><th class="noprint"></th></tr>${list || '<tr><td colspan="7" class="muted">No coverage recorded.</td></tr>'}</table></div></div>`;
+}
+
+/* ---------- reports ---------- */
+function vReports() {
+  const [y, m] = (st.repYM || ym()).split('-').map(Number);
+  const r = report(y, m, st.repEmp);
+  const days = r.roster[0] ? r.roster[0].cells : [];
+  const head = ['EmployeeCode', 'Name'].concat(Array.from({ length: 31 }, (_, i) => (i < days.length ? `${i + 1} - ${days[i].dow}` : `${i + 1} - `)));
+  const ros = `<div class="tw"><table class="ro"><tr>${head.map((h) => `<th>${h}</th>`).join('')}</tr>${r.roster.map((e) => `<tr><td>${esc(e.code)}</td><td>${esc(e.name)}</td>${Array.from({ length: 31 }, (_, i) => { const c = e.cells[i]; return `<td class="${c && c.changed ? 'chg' : ''}">${c ? esc(c.text) : ''}</td>`; }).join('')}</tr>`).join('')}</table></div>
+  <p class="muted">${Object.keys(C.SHIFTS).map((k) => `<b>${k}</b> = ${fmt12(C.SHIFTS[k].start)} to ${fmt12(C.SHIFTS[k].end)}`).join(' &nbsp; ')} &nbsp; <b>WO</b> = Weekly Off &nbsp; <b>H</b> = Holiday &nbsp; <b>L</b> = Leave &nbsp; <b>L-FH / L-SH</b> = half-day leave (first / second half) &nbsp; <span style="background:#ffff00;padding:0 6px">yellow</span> = duty changed from the normal schedule</p>`;
+  const sum = r.summaries.map((s) => `<tr><td><b>${esc(s.employee)}</b></td><td>${s.scheduledDays}</td><td>${s.attendanceDays}</td><td>${s.leaveDays}</td><td>${s.weeklyOffs}</td><td>${s.holidays}</td><td>${s.coverageDays}</td><td>${s.shiftAdjustments}</td></tr>`).join('');
+  const det = r.rows.map((x) => `<tr><td>${fmtDate(x.date)}</td><td>${esc(x.employee)}</td><td>${esc(x.scheduled || '—')}</td><td>${esc(x.actual || '—')}</td><td>${pill(x.status)}${x.incomplete ? ' ⚠' : ''}</td><td>${esc(x.covered)}</td><td>${esc(x.remarks)}</td></tr>`).join('');
+  const cov = r.coverage.map((c) => `<tr><td>${fmtDate(c.date)}</td><td>${esc(c.absent)}</td><td>${esc(c.covering)}</td><td>${esc(c.timing || '—')}</td><td>${esc(c.remarks)}</td></tr>`).join('');
+  const s = st.db.settings;
+  return `<div class="card noprint"><div class="row"><div><label>Month</label><input type="month" id="rpM" value="${st.repYM || ym()}"></div>
+  <div><label>Employee</label><select id="rpE"><option value="ALL">Both / All</option>${st.db.employees.map((e) => `<option value="${e.id}" ${st.repEmp === e.id ? 'selected' : ''}>${esc(e.name)}</option>`).join('')}</select></div>
+  <div class="fit"><button class="btn big" id="rpDuty">⬇ Download Duty List (Excel)</button></div><div class="fit"><button class="btn sec" id="rpDetail">⬇ Detailed report (Excel)</button></div><div class="fit"><button class="btn sec" onclick="window.print()">Print</button></div></div></div>
+  <div class="card"><div style="text-align:center;margin-bottom:12px"><h2 style="margin:0">${esc(s.HospitalName)} – Monthly Attendance Report</h2><div>${esc(r.label)}${s.Department ? ' · ' + esc(s.Department) : ''}${s.SupervisorName ? ' · Submitted to ' + esc(s.SupervisorName) : ''}</div></div>
+  <h3>Duty list</h3>${ros}
+  <h3>Employee summary</h3><div class="tw"><table><tr><th>Employee</th><th>Scheduled working days</th><th>Attendance days</th><th>Leave days</th><th>Weekly offs</th><th>Holidays</th><th>Duty coverage days</th><th>Shift adjustments</th></tr>${sum}</table></div>
+  <h3>Detailed attendance</h3><div class="tw"><table><tr><th>Date</th><th>Employee</th><th>Scheduled shift</th><th>Actual duty</th><th>Status</th><th>Covered employee</th><th>Remarks</th></tr>${det}</table></div>
+  <h3>Shift coverage report</h3><div class="tw"><table><tr><th>Date</th><th>Employee on leave</th><th>Covering employee</th><th>Actual duty timing</th><th>Remarks</th></tr>${cov || '<tr><td colspan="5" class="muted">No coverage recorded.</td></tr>'}</table></div>
+  <p class="muted">⚠ = attendance not recorded or actual times missing. Half-day leave counts as 0.5 day.</p></div>`;
+}
+
+/* ---------- settings ---------- */
+function vSettings() {
+  const s = st.db.settings;
+  return `<div class="card"><h2>Employees</h2><div class="tw"><table><tr><th>Name</th><th>Employee code</th><th>Fixed shift</th><th>Auto present</th><th>Active</th><th></th></tr>${st.db.employees.map((e) => `<tr data-emp="${e.id}"><td><input data-en value="${esc(e.name)}"></td><td><input data-ec value="${esc(e.code)}" style="width:100px"></td><td><select data-ef>${shiftOpts(e.fixed, 'None (changes monthly)')}</select></td><td><input type="checkbox" data-eauto ${e.auto ? 'checked' : ''} style="width:auto"></td><td><input type="checkbox" data-ea ${e.active ? 'checked' : ''} style="width:auto"></td><td><button class="btn sm" data-esave="${e.id}">Save</button></td></tr>`).join('')}
+  <tr><td><input id="newEmp" placeholder="New employee name"></td><td><input id="newCode" placeholder="Code" style="width:100px"></td><td><select id="newFixed">${shiftOpts('', 'None (changes monthly)')}</select></td><td><input type="checkbox" id="newAuto" style="width:auto"></td><td></td><td><button class="btn sm sec" id="addEmp">Add</button></td></tr></table></div>
+  <p class="muted">Names are printed in capitals on the duty list exactly as typed here. <b>Auto present</b>: every day the person is marked present on their monthly shift (Weekly Off on Sundays); you only change the exceptions.</p></div>
+  <div class="card"><h2>Report details</h2><div class="row"><div><label>Hospital name</label><input id="sHosp" value="${esc(s.HospitalName)}"></div><div><label>Department</label><input id="sDept" value="${esc(s.Department)}"></div>
+  <div><label>Supervisor name</label><input id="sSup" value="${esc(s.SupervisorName)}"></div><div><label>Time zone</label><input id="sTz" value="${esc(s.TimeZone)}"></div><div class="fit"><button class="btn" id="sSave">Save</button></div></div></div>
+  <div class="card"><h2>Database</h2><p class="muted">Changes show instantly and are saved to your Google Sheet in the background (tabs: Employees, MonthlyShifts, Attendance, Coverage, Settings).</p>
+  <div class="row"><div class="fit">${st.url ? `<a class="btn sec" style="text-decoration:none;display:inline-block" target="_blank" rel="noopener" href="${esc(st.url)}">Open Google Sheet</a>` : ''}</div><div class="fit"><button class="btn sec" id="refresh">↻ Refresh from Google Sheet</button></div></div>
+  ${st.boot && st.boot.defaultCreds ? '<div class="banner" style="margin-top:12px">The login is the default <b>admin / admin</b>. To change it, set <code>APP_USERNAME</code> and <code>APP_PASSWORD</code> in Vercel → Settings → Environment Variables and redeploy.</div>' : ''}</div>`;
+}
+
+/* ---------- actions ---------- */
+async function downloadExcel(y, m, type, emp) {
+  try {
+    toast('Preparing Excel…', 'info');
+    await flushAll();
+    const r = await fetch(`/api/export?year=${y}&month=${m}&type=${type}&employeeId=${encodeURIComponent(emp)}`, { headers: { 'x-auth': st.token } });
+    if (!r.ok) { const j = await r.json().catch(() => ({})); throw new Error(j.error || 'Export failed.'); }
+    const cd = r.headers.get('Content-Disposition') || ''; const name = (cd.match(/filename="(.+)"/) || [])[1] || 'attendance.xlsx';
+    const a = document.createElement('a'); a.href = URL.createObjectURL(await r.blob()); a.download = name; document.body.appendChild(a); a.click(); a.remove();
+    toast('Excel downloaded.');
+  } catch (e) { toast(e.message, 'err'); }
+}
+function bind() {
+  const v = $('#view');
+  const on = (sel, fn) => v.querySelectorAll(sel).forEach((el) => (el.onclick = () => fn(el)));
+  on('[data-date]', (el) => { st.attDate = el.dataset.date; go('attendance'); });
+  v.querySelectorAll('[data-go]').forEach((a) => (a.onclick = (e) => { e.preventDefault(); go(a.dataset.go); }));
+  // shifts
+  on('#saveShifts', () => { const codes = {}; emps().forEach((e) => { const el = v.querySelector(`[data-sh="${e.id}"]`); if (el) codes[e.id] = el.value; }); run(() => C.planShifts(st.db, { year: st.year, month: st.month, codes }), 'Shifts saved.'); });
+  on('#copyPrev', (b) => { const h = historyList().find((x) => `${x.year}-${x.month}` === b.dataset.prev); emps().forEach((e) => { const el = v.querySelector(`[data-sh="${e.id}"]`); if (el && h.codes[e.id]) el.value = h.codes[e.id]; }); toast('Copied. Change if needed, then press Save shifts.', 'info'); });
+  on('[data-pick]', (el) => { const [y, m] = el.dataset.pick.split('-').map(Number); st.year = y; st.month = m; st.attDate = defaultDate(); render(); });
+  // attendance
+  const setDate = (d) => { st.attDate = d; if (d.slice(0, 7) !== ym()) { st.year = +d.slice(0, 4); st.month = +d.slice(5, 7); } render(); };
+  const stepDay = (n) => { const t = new Date(st.attDate + 'T00:00:00Z'); t.setUTCDate(t.getUTCDate() + n); setDate(t.toISOString().slice(0, 10)); };
+  on('#dPrev', () => stepDay(-1)); on('#dNext', () => stepDay(1));
+  if ($('#attDate')) $('#attDate').addEventListener('change', (e) => { if (e.target.value) setDate(e.target.value); });
+  const saveAtt = (id, over) => {
+    const c = v.querySelector(`[data-card="${id}"]`), g = (f) => c.querySelector(`[data-f="${f}"]`).value;
+    const status = over || g('status'), shiftCode = g('shift'), ex = att(st.attDate, id);
+    let as = g('as'), ae = g('ae');
+    if (over === S.NORMAL && C.SHIFTS[shiftCode]) { as = C.SHIFTS[shiftCode].start; ae = C.SHIFTS[shiftCode].end; }
+    if (over && over !== S.NORMAL) { as = ''; ae = ''; }
+    if (C.LEAVES.includes(status) && status !== S.LEAVE && (!ex || ex.Status !== status)) { as = ''; ae = ''; }
+    run(() => C.planDay(st.db, { date: st.attDate, employeeId: id, status, shiftCode, actualStart: as, actualEnd: ae, remarks: g('rm') }), 'Attendance saved.');
+  };
+  on('[data-q]', (el) => saveAtt(el.dataset.e, el.dataset.q));
+  on('[data-save]', (el) => saveAtt(el.dataset.save));
+  on('[data-cov]', (el) => { const id = el.dataset.cov; const other = emps().find((e) => e.id !== id); st.covEdit = null; st.covPrefill = { date: st.attDate, cov: id, abs: other && other.id }; go('coverage'); });
+  on('[data-del]', (el) => { if (confirm('Delete this attendance record?')) run(() => C.planDeleteAttendance(st.db, el.dataset.del), 'Record deleted.'); });
+  on('#offAll', () => {
+    if (!confirm('Mark every Sunday in this month as Weekly Off for all active employees? Existing records are not changed.')) return;
+    try { const r = C.planWeeklyOffs(st.db, { year: st.year, month: st.month, weekday: 0 }); commit(r.ops); toast(`${r.count} weekly-off records added.`); } catch (e) { toast(e.message, 'err'); }
+  });
+  // leave
+  on('#lvSave', () => { const f = val('#lvFrom'); if (run(() => C.planLeave(st.db, { employeeId: val('#lvEmp'), kind: val('#lvKind'), from: f, to: val('#lvTo') || f, remarks: val('#lvRm') }), 'Leave recorded.') && f.slice(0, 7) !== ym()) { st.year = +f.slice(0, 4); st.month = +f.slice(5, 7); render(); } });
+  on('[data-covleave]', (el) => { const [date, abs] = el.dataset.covleave.split('|'); st.covEdit = st.db.coverage.find((c) => c.Date === date && c.AbsentEmployeeID === abs) || null; st.covPrefill = { date, abs, cov: (emps().find((e) => e.id !== abs) || {}).id }; go('coverage'); });
+  // coverage
+  on('#cvSave', () => { const ed = st.covEdit; if (run(() => C.planCoverage(st.db, { id: ed && ed.CoverageID, from: val('#cvFrom'), to: val('#cvTo'), absentId: val('#cvAbs'), coveringId: val('#cvCov'), type: val('#cvType'), actualStart: val('#cvAs'), actualEnd: val('#cvAe'), remarks: val('#cvRm'), updateAttendance: $('#cvAtt').checked }), 'Coverage saved.')) { st.covEdit = null; st.covPrefill = null; render(); } });
+  on('#cvCancel', () => { st.covEdit = null; render(); });
+  on('[data-covedit]', (el) => { st.covEdit = st.db.coverage.find((c) => c.CoverageID === el.dataset.covedit); render(); window.scrollTo(0, 0); });
+  on('[data-covdel]', (el) => { if (confirm('Delete this coverage record? Attendance entries are not changed.')) run(() => C.planDeleteCoverage(st.db, el.dataset.covdel), 'Coverage deleted.'); });
+  // reports
+  if ($('#rpM')) $('#rpM').onchange = (e) => { st.repYM = e.target.value || ym(); render(); };
+  if ($('#rpE')) $('#rpE').onchange = (e) => { st.repEmp = e.target.value; render(); };
+  const rp = () => (st.repYM || ym()).split('-').map(Number);
+  on('#rpDuty', () => { const [y, m] = rp(); downloadExcel(y, m, 'duty', 'ALL'); });
+  on('#rpDetail', () => { const [y, m] = rp(); downloadExcel(y, m, 'detail', st.repEmp); });
+  // settings
+  const saveEmp = (id, name, active, code, fixedShift, auto) => run(() => C.planEmployee(st.db, { id, name, active, code, fixedShift, auto }), 'Employee saved.');
+  on('[data-esave]', (el) => { const tr = el.closest('tr'); saveEmp(el.dataset.esave, tr.querySelector('[data-en]').value, tr.querySelector('[data-ea]').checked, tr.querySelector('[data-ec]').value, tr.querySelector('[data-ef]').value, tr.querySelector('[data-eauto]').checked); });
+  on('#addEmp', () => saveEmp(null, val('#newEmp'), true, val('#newCode'), val('#newFixed'), $('#newAuto').checked));
+  on('#sSave', () => { const o = C.emptyOps(); o.settings = { HospitalName: val('#sHosp'), Department: val('#sDept'), SupervisorName: val('#sSup'), TimeZone: val('#sTz') }; commit(o); toast('Settings saved.'); });
+  on('#refresh', async () => { try { toast('Refreshing…', 'info'); await flushAll(); await fetchAll(); autoFill(); render(); toast('Up to date.'); } catch (e) { toast(e.message, 'err'); } });
+}
+window.addEventListener('hashchange', () => { const p = location.hash.slice(1); if (PAGES.some((x) => x[0] === p) && p !== st.page && st.db) { st.page = p; render(); } });
+start();
+</script>
+</body>
+</html>
