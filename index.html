@@ -11,7 +11,7 @@
 body{margin:0;min-height:100vh;display:grid;place-items:center;background:radial-gradient(ellipse at 30% 45%,#07304e,#020b1c 65%,#01040b);color:#f4fcff;font-family:Inter,system-ui,sans-serif;overflow-x:hidden}
 body.lit{background:radial-gradient(ellipse at 30% 45%,#075477,#031b35 48%,#01050e 90%)}
 .scene{width:100%;min-height:100vh;display:grid;place-items:center;padding:24px}
-.stage{width:min(1300px,100%);display:grid;grid-template-columns:1.1fr 1fr;gap:5vw;align-items:center;zoom:.85}
+.stage{width:min(1300px,100%);display:grid;grid-template-columns:1.1fr 1fr;gap:5vw;align-items:center;zoom:.75}
 .lamp-area{position:relative;min-height:650px}
 .lamp-art{width:100%;height:650px;overflow:visible;filter:drop-shadow(0 0 15px #00eaff22)}
 .lamp-mouth{fill:#172c3d;transition:fill .5s}
@@ -61,7 +61,7 @@ input[type=password],input[type=text]{width:100%;min-width:0;border:0;outline:0;
 <g transform="rotate(-10 425 160)"><path d="M340 116 Q330 28 407 25 Q480 20 487 116Z" fill="url(#metal)" stroke="#1387a8" stroke-width="2"/><path d="M280 208 Q300 83 420 87 Q533 87 558 208Z" fill="url(#metal)" stroke="#1583a6" stroke-width="2"/><ellipse class="lamp-mouth" cx="419" cy="208" rx="139" ry="39" stroke="#52d8ef" stroke-width="3"/><ellipse class="lamp-bulb" cx="419" cy="198" rx="32" ry="12" fill="#fff"/></g>
 </svg>
 <div class="string-hit" id="pullString" role="button" tabindex="0" aria-label="Pull the chain to turn on the lamp"><div class="string" id="string"></div><div class="pull-knob" id="knob"></div></div>
-<div class="instruction">Pull the chain to <em>turn on the light</em></div></section>
+</section>
 <section class="login-card" aria-label="Hospital login">
 <h1>Welcome</h1><p class="subtitle">Hospital Attendance Management System</p>
 <form id="loginForm"><label class="field-label" for="password">Password</label>
